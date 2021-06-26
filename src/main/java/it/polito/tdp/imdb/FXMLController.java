@@ -49,7 +49,17 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	
+    	Year year = boxAnno.getValue();
+    	
+    	if (year == null) {
+			txtResult.appendText("Parametri non inseriti");
+			return ;
+		}
+    	
+    	String msg = model.createGraph(year);
+    	txtResult.appendText(msg);
+    	
     }
 
     @FXML

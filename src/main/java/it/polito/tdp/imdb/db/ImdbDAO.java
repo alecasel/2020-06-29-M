@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import it.polito.tdp.imdb.model.Actor;
@@ -85,8 +86,39 @@ public class ImdbDAO {
 	}
 	
 	
-	
-	
+	// registi che hanno diretto almeno un film nell'anno selezionato
+	/*
+	 * id (directors)
+	 * (movies_directors)
+	 * year (movies)
+	 */
+	public List<Director> getVertices(Year year) {
+		String sql = "SELECT DISTINCT d.id, d.first_name, d.last_name "
+				+ "FROM directors d, movies_directors md, movies m "
+				+ "WHERE m.year = ? "
+				+ "AND d.id = md.director_id "
+				+ "AND m.id = md.movie_id";
+		List<Director> result = new ArrayList<Director>();
+		Connection conn = DBConnect.getConnection();
+
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, year.getValue());
+			ResultSet res = st.executeQuery();
+			while (res.next()) {
+
+				Director director = new Director(res.getInt("id"), res.getString("first_name"), res.getString("last_name"));
+				
+				result.add(director);
+			}
+			conn.close();
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	
 }
